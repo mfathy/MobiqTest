@@ -36,6 +36,16 @@ android {
     useLibrary 'android.test.runner'
     useLibrary 'android.test.base'
     useLibrary 'android.test.mock'
+
+    sourceSets {
+        String sharedTestDir = 'src/commonTest/java'
+        test {
+            java.srcDir sharedTestDir
+        }
+        androidTest {
+            java.srcDir sharedTestDir
+        }
+    }
 }
 
 kapt {
@@ -120,7 +130,6 @@ dependencies {
     //  android testing
     androidTestImplementation "org.mockito:mockito-android:${mockitoAndroidVersion}"
     androidTestImplementation "junit:junit:${rootProject.ext.jUnitVersion}"
-
 
     // Core library
     androidTestImplementation "androidx.test:core:${rootProject.ext.tesCoreVersion}"
