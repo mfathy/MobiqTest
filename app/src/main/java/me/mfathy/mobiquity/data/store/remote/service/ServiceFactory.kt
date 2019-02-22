@@ -3,7 +3,7 @@ package me.mfathy.mobiquity.data.store.remote.service
 import android.content.Context
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
-import me.mfathy.mobiquity.BuildConfig.BASE_URL
+import me.mfathy.mobiquity.BuildConfig
 import me.mfathy.mobiquity.data.store.remote.utils.NetworkConnection
 import okhttp3.Cache
 import okhttp3.Interceptor
@@ -28,19 +28,22 @@ object ServiceFactory {
     fun makeRemoteService(
         context: Context,
         networkConnection: NetworkConnection,
-        isDebug: Boolean
+        isDebug: Boolean,
+        useCache: Boolean = true,
+        baseUrl: String = BuildConfig.BASE_URL
     ): RemoteServiceApi {
         val okHttpClient = makeOkHttpClient(
             context,
+            useCache,
             makeLoggingInterceptor((isDebug)),
             makeCachingInterceptor(networkConnection)
         )
-        return makeRemoteService(okHttpClient, GsonBuilder().create())
+        return makeRemoteService(okHttpClient, GsonBuilder().create(), baseUrl)
     }
 
-    private fun makeRemoteService(okHttpClient: OkHttpClient, gson: Gson): RemoteServiceApi {
+    private fun makeRemoteService(okHttpClient: OkHttpClient, gson: Gson, baseUrl: String): RemoteServiceApi {
         val retrofit = Retrofit.Builder()
-            .baseUrl(BASE_URL)
+            .baseUrl(baseUrl)
             .client(okHttpClient)
             .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
             .addConverterFactory(GsonConverterFactory.create(gson))
@@ -51,16 +54,23 @@ object ServiceFactory {
 
     private fun makeOkHttpClient(
         context: Context,
+        useCache: Boolean,
         httpLoggingInterceptor: HttpLoggingInterceptor,
         httpCachingInterceptor: Interceptor
     ): OkHttpClient {
-        return OkHttpClient.Builder()
+        return if (useCache) OkHttpClient.Builder()
             .addInterceptor(httpLoggingInterceptor)
             .addInterceptor(httpCachingInterceptor)
             .cache(makeHttpCache(context))
             .connectTimeout(20, TimeUnit.SECONDS)
             .readTimeout(20, TimeUnit.SECONDS)
             .build()
+        else
+            OkHttpClient.Builder()
+                .addInterceptor(httpLoggingInterceptor)
+                .connectTimeout(20, TimeUnit.SECONDS)
+                .readTimeout(20, TimeUnit.SECONDS)
+                .build()
     }
 
     /**

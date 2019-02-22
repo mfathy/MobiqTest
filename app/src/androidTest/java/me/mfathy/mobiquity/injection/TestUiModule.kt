@@ -1,8 +1,10 @@
 package me.mfathy.mobiquity.injection
 
+import android.os.AsyncTask
 import dagger.Module
 import dagger.Provides
 import dagger.android.ContributesAndroidInjector
+import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import me.mfathy.mobiquity.domain.executor.ExecutionThread
 import me.mfathy.mobiquity.executor.ExecutionSchedulers
@@ -21,8 +23,8 @@ abstract class TestUiModule {
         @Provides
         @JvmStatic
         fun providesExecutionThread(): ExecutionThread = ExecutionSchedulers(
-            Schedulers.trampoline(),
-            Schedulers.trampoline()
+            Schedulers.from(AsyncTask.THREAD_POOL_EXECUTOR),
+            AndroidSchedulers.mainThread()
         )
     }
 
