@@ -37,7 +37,9 @@ I have included the required Instrumentation, Unit and UI tests with the project
 
 *   Unit tests for most of the app classes.
 *   Integration tests for testing integration between layers components and the layer itself.
-*   Ui tests using Espresso.
+*   Ui tests using Espresso:
+    *   _For espresso testing I have use normal way of mocking the response using dagger injection >> check espresso tests on [master](https://github.com/mfathy/MobiqTest) branch._
+    *   _Another way of testing using [Okhttp mock web server](https://github.com/square/okhttp/tree/master/mockwebserver) to easily mock valid, invalid responses and server errors to show how the UI will acts at those situations >> check espresso tests on [espresso-tests-mockwebserver](https://github.com/mfathy/MobiqTest/tree/espresso-tests-mockwebserver) branch._
 
 To run all test case at once look for the following test suites:
 
